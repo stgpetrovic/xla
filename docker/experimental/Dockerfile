@@ -12,7 +12,7 @@ ARG tpuvm=1
 ARG build_cpp_tests=0
 ARG package_version=1.14
 
-ARG bazel_jobs=
+ARG bazel_jobs=16
 
 # Contains all build dependencies for PT/XLA
 FROM python:${python_version}-${debian_version} AS builder
