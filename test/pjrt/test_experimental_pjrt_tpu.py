@@ -34,6 +34,8 @@ class TestExperimentalPjrtTpu(parameterized.TestCase):
     # sub-processes will not be able to initialize the client witht the correct
     # settings.
 
+  @absltest.skipIf(tpu.get_tpu_env()['ACCELERATOR_TYPE'] == 'v3-8',
+                   'This test is not currently supported on v3 TPUVMs.')
   def test_xla_devices_multiprocess(self):
     accelerator_devices = {
         'v3-8': {
