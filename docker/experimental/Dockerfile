@@ -69,7 +69,7 @@ FROM builder AS artifacts
 COPY tf_patches/ tf_patches/
 COPY third_party/ third_party/
 
-RUN patch -d third_party/tensorflow -N -p1 < /pytorch/xla/tf_patches/patch.diff
+RUN for patch in $(ls /pytorch/xla/tf_patches); do patch -d third_party/tensorflow -N -p1 < /pytorch/xla/tf_patches/$patch; done
 
 COPY build_torch_xla_libs.sh .
 
@@ -86,6 +86,7 @@ COPY scripts/ scripts/
 
 ARG build_cpp_tests
 ARG package_version
+RUN pip install requests
 RUN TORCH_XLA_VERSION=${package_version} BUILD_CPP_TESTS=${build_cpp_tests} TPUVM_MODE=${tpuvm} BUNDLE_LIBTPU=${tpuvm} XLA_CUDA=${cuda} TF_CUDA_COMPUTE_CAPABILITIES=${tf_cuda_compute_capabilities} python setup.py bdist_wheel
 
 RUN pip install dist/*.whl
