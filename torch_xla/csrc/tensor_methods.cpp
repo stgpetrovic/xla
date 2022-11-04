@@ -2357,16 +2357,6 @@ XLATensorPtr XLATensor::squeeze(const XLATensorPtr& input, int64_t dim) {
   return view(input, output_dimensions);
 }
 
-void XLATensor::squeeze_(XLATensorPtr& input) {
-  input->SetIrValue(torch::lazy::MakeNode<Squeeze>(input->GetIrValue(), -1));
-}
-
-void XLATensor::squeeze_(XLATensorPtr& input, int64_t dim) {
-  input->SetIrValue(torch::lazy::MakeNode<Squeeze>(
-      input->GetIrValue(), torch::lazy::GetCanonicalDimensionIndex(
-                               dim, input->shape().get().rank())));
-}
-
 XLATensorPtr XLATensor::stack(absl::Span<const XLATensorPtr> tensors,
                               int64_t dim) {
   XLA_CHECK_GT(tensors.size(), 0);
@@ -2532,14 +2522,6 @@ XLATensorPtr XLATensor::transpose(const XLATensorPtr& input, int64_t dim0,
       /*dim0=*/dim0, /*dim1=*/dim1, /*rank=*/input_shape.get().rank());
   ViewInfo view_info(ViewInfo::Type::kPermute, input_shape, permute_dims);
   return input->CreateViewTensor(std::move(view_info));
-}
-
-void XLATensor::transpose_(XLATensorPtr& input, int64_t dim0, int64_t dim1) {
-  auto input_shape = input->shape();
-  auto permute_dims = torch::lazy::MakeTransposePermutation(
-      /*dim0=*/dim0, /*dim1=*/dim1, /*rank=*/input_shape.get().rank());
-  ViewInfo view_info(ViewInfo::Type::kPermute, input_shape, permute_dims);
-  return input->ModifyCurrentView(std::move(view_info));
 }
 
 std::tuple<XLATensorPtr, XLATensorPtr> XLATensor::triangular_solve(

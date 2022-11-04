@@ -1088,10 +1088,6 @@ class XLATensor : public c10::intrusive_ptr_target {
   // unchanged input otherwise.
   static XLATensorPtr squeeze(const XLATensorPtr& input, int64_t dim);
 
-  // In-place versions of the methods above.
-  static void squeeze_(XLATensorPtr& input);
-  static void squeeze_(XLATensorPtr& input, int64_t dim);
-
   static XLATensorPtr stack(absl::Span<const XLATensorPtr> tensors,
                             int64_t dim);
 
@@ -1151,9 +1147,6 @@ class XLATensor : public c10::intrusive_ptr_target {
   // Swap given dimensions of the input.
   static XLATensorPtr transpose(const XLATensorPtr& input, int64_t dim0,
                                 int64_t dim1);
-
-  // In-place version of the method above.
-  static void transpose_(XLATensorPtr& input, int64_t dim0, int64_t dim1);
 
   static std::tuple<XLATensorPtr, XLATensorPtr> triangular_solve(
       const XLATensorPtr& rhs, const XLATensorPtr& lhs, bool left_side,
