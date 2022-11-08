@@ -2473,6 +2473,7 @@ at::Tensor XLANativeFunctions::scatter_add(const at::Tensor& self, int64_t dim,
 
 at::Tensor XLANativeFunctions::select_copy(const at::Tensor& self, int64_t dim,
                                       int64_t index) {
+  std::cout << "WONJOO: at XLANativeFunctions::select_copy1" << std::endl;
   XLA_FN_COUNTER("xla::");
   return bridge::AtenFromXlaTensor(
       XLATensor::select(bridge::GetXlaTensor(self), dim, index));
@@ -2480,6 +2481,10 @@ at::Tensor XLANativeFunctions::select_copy(const at::Tensor& self, int64_t dim,
 
 at::Tensor XLANativeFunctions::select_scatter(const at::Tensor& base, const at::Tensor& mutated_view, int64_t dim,
                                       int64_t index) {
+  std::cout << "WONJOO: at XLANativeFunctions::select_scatter1" << std::endl;
+  std::cout << "WONJOO: at XLANativeFunctions::select_scatter2, base=" << base << std::endl;
+  std::cout << "WONJOO: at XLANativeFunctions::select_scatter3, mutated_view=" << mutated_view << std::endl;
+  std::cout << "WONJOO: at XLANativeFunctions::select_scatter4, dim=" << dim << std::endl;
   auto base_ = bridge::GetXlaTensor(base);
   auto mutated_view_ = bridge::GetXlaTensor(mutated_view);
   auto base_clone = XLATensor::clone(base_);
@@ -3053,6 +3058,7 @@ at::Tensor XLANativeFunctions::pixel_unshuffle(const at::Tensor& self,
 at::Tensor XLANativeFunctions::select_backward(const at::Tensor& grad_output,
                                                at::IntArrayRef input_sizes,
                                                int64_t dim, int64_t index) {
+  std::cout << "WONJOO: at XLANativeFunctions::select_backward" << std::endl;
   return at::functionalization::functionalize_aten_op<ATEN_OP(
       select_backward)>::call(grad_output, input_sizes, dim, index);
 }
