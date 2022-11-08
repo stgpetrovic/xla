@@ -3072,8 +3072,6 @@ at::Tensor XLANativeFunctions::linalg_pinv(
 at::Tensor XLANativeFunctions::diagonal_backward_symint(
     const at::Tensor& grad_output, at::SymIntArrayRef input_sizes,
     int64_t offset, int64_t dim1, int64_t dim2) {
-  return at::native::diagonal_backward_symint(grad_output, input_sizes, offset,
-                                              dim1, dim2);
   return at::functionalization::functionalize_aten_op_symint<ATEN_OP(
       diagonal_backward)>::call(grad_output, input_sizes, offset, dim1, dim2);
 }
