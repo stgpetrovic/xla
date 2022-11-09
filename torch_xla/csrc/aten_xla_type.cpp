@@ -1304,6 +1304,7 @@ at::Tensor XLANativeFunctions::hardtanh_backward(const at::Tensor& grad_output,
 at::Tensor XLANativeFunctions::index(
     const at::Tensor& self,
     const c10::List<c10::optional<at::Tensor>>& indices) {
+  std::cout << "WONJOO: at aten_xla_type.cpp, index1" << std::endl;
   XLA_FN_COUNTER("xla::");
   bool indices_on_cpu_or_xla =
       std::all_of(indices.begin(), indices.end(),
@@ -1334,6 +1335,7 @@ at::Tensor XLANativeFunctions::index_add(const at::Tensor& self, int64_t dim,
                                          const at::Tensor& index,
                                          const at::Tensor& source,
                                          const at::Scalar& alpha) {
+  std::cout << "WONJOO: at aten_xla_type.cpp, index_add1" << std::endl;
   XLA_FN_COUNTER("xla::");
   return bridge::AtenFromXlaTensor(XLATensor::index_add(
       bridge::GetXlaTensor(self), dim, bridge::GetXlaTensor(index),
@@ -1343,6 +1345,7 @@ at::Tensor XLANativeFunctions::index_add(const at::Tensor& self, int64_t dim,
 at::Tensor XLANativeFunctions::index_copy(const at::Tensor& self, int64_t dim,
                                           const at::Tensor& index,
                                           const at::Tensor& source) {
+  std::cout << "WONJOO: at aten_xla_type.cpp, index_copy1" << std::endl;
   XLA_FN_COUNTER("xla::");
   XLATensorPtr self_tensor = bridge::GetXlaTensor(self);
   return bridge::AtenFromXlaTensor(
@@ -1353,6 +1356,7 @@ at::Tensor XLANativeFunctions::index_copy(const at::Tensor& self, int64_t dim,
 at::Tensor& XLANativeFunctions::index_fill_(at::Tensor& self, int64_t dim,
                                             const at::Tensor& index,
                                             const at::Scalar& value) {
+  std::cout << "WONJOO: at aten_xla_type.cpp, index_fill_a_1" << std::endl;
   XLA_FN_COUNTER("xla::");
   XLATensorPtr self_tensor = bridge::GetXlaTensor(self);
   XLATensor::index_fill_(self_tensor, dim, bridge::GetXlaTensor(index), value);
@@ -1362,6 +1366,7 @@ at::Tensor& XLANativeFunctions::index_fill_(at::Tensor& self, int64_t dim,
 at::Tensor& XLANativeFunctions::index_fill_(at::Tensor& self, int64_t dim,
                                             const at::Tensor& index,
                                             const at::Tensor& value) {
+  std::cout << "WONJOO: at aten_xla_type.cpp, index_fill_b_1" << std::endl;
   XLA_FN_COUNTER("xla::");
   XLATensorPtr self_tensor = bridge::GetXlaTensor(self);
   XLATensor::index_fill_(self_tensor, dim, bridge::GetXlaTensor(index),
@@ -1372,6 +1377,7 @@ at::Tensor& XLANativeFunctions::index_fill_(at::Tensor& self, int64_t dim,
 at::Tensor& XLANativeFunctions::index_put_(
     at::Tensor& self, const c10::List<c10::optional<at::Tensor>>& indices,
     const at::Tensor& values, bool accumulate) {
+  std::cout << "WONJOO: at aten_xla_type.cpp, index_put_1" << std::endl;
   XLA_FN_COUNTER("xla::");
   XLA_CHECK(self.scalar_type() == values.scalar_type());
   CanonicalIndexInfo canonical_index_info =
@@ -1395,6 +1401,7 @@ at::Tensor& XLANativeFunctions::index_put_(
 
 at::Tensor XLANativeFunctions::index_select(const at::Tensor& self, int64_t dim,
                                             const at::Tensor& index) {
+  std::cout << "WONJOO: at aten_xla_type.cpp, index_select1" << std::endl;
   XLA_FN_COUNTER("xla::");
   return bridge::AtenFromXlaTensor(XLATensor::index_select(
       bridge::GetXlaTensor(self), dim, bridge::GetXlaTensor(index)));
