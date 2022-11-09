@@ -3058,7 +3058,7 @@ at::Tensor XLANativeFunctions::narrow_copy_symint(const at::Tensor& self,
                                                   c10::SymInt start,
                                                   c10::SymInt length) {
   return at::functionalization::functionalize_aten_op_symint<ATEN_OP(
-      narrow_copy_dense_symint)>::call(self, dim, start, length);
+      narrow_copy)>::call(self, dim, start, length);
 }
 at::Tensor XLANativeFunctions::pixel_shuffle(const at::Tensor& self,
                                              int64_t upscale_factor) {
