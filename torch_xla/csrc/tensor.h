@@ -23,7 +23,6 @@
 #include "torch_xla/csrc/ir_util.h"
 #include "torch_xla/csrc/lowering_context.h"
 #include "torch_xla/csrc/torch_util.h"
-#include "torch_xla/csrc/view.h"
 
 namespace torch_xla {
 
@@ -104,10 +103,6 @@ class XLATensor : public c10::intrusive_ptr_target {
 
   const torch::lazy::BackendDevice& GetDevice() const;
   int64_t GetUniqueId() const;
-
-  // Retrieves an opaque ID of the alias object upon which the tensor's view is
-  // rooted, or 0 if this tensor is not a view.
-  std::ptrdiff_t GetViewAliasId() const;
 
   // Fetches the XLA data behind the tensor. If the tensor has a graph defining
   // its current value, executes the graph and fetches the XLA data result.
@@ -1319,12 +1314,6 @@ class XLATensor : public c10::intrusive_ptr_target {
           logical_element_type(logical_element_type),
           device(device),
           unique_id(GetNextTensorId()) {}
-    Data(std::shared_ptr<View> view, const torch::lazy::BackendDevice& device,
-         c10::optional<at::ScalarType> logical_element_type)
-        : view(std::move(view)),
-          logical_element_type(logical_element_type),
-          device(device),
-          unique_id(GetNextTensorId()) {}
     Data(at::Tensor tensor_data, const torch::lazy::BackendDevice& device)
         : logical_element_type(tensor_data.scalar_type()),
           tensor_data(std::move(tensor_data)),
@@ -1335,7 +1324,6 @@ class XLATensor : public c10::intrusive_ptr_target {
 
     torch::lazy::BackendDataPtr xla_data;
     torch::lazy::Value ir_value;
-    std::shared_ptr<View> view;
     // TODO: remove this in favor of torch::lazy::Shape within ir_value.
     c10::optional<at::ScalarType> logical_element_type;
     c10::optional<at::Tensor> tensor_data;
@@ -1350,14 +1338,7 @@ class XLATensor : public c10::intrusive_ptr_target {
   XLATensor(torch::lazy::Value ir_value,
             const torch::lazy::BackendDevice& device,
             c10::optional<at::ScalarType> logical_element_type = c10::nullopt);
-  XLATensor(std::shared_ptr<View> view,
-            const torch::lazy::BackendDevice& device,
-            c10::optional<at::ScalarType> logical_element_type = c10::nullopt);
   XLATensor(std::shared_ptr<Data> data);
-
-  static XLATensorPtr Create(
-      std::shared_ptr<View> view, const torch::lazy::BackendDevice& device,
-      c10::optional<at::ScalarType> logical_element_type = c10::nullopt);
 
   Data* data() const;
 
@@ -1374,16 +1355,6 @@ class XLATensor : public c10::intrusive_ptr_target {
 
   torch::lazy::Value CreateTensorNode(torch::lazy::BackendDataPtr data,
                                       bool read_only) const;
-
-  View::IrNode GetViewUpdate(const std::shared_ptr<View>& view) const;
-
-  std::shared_ptr<View> UpdateView(std::shared_ptr<View> view,
-                                   torch::lazy::Value ir_value) const;
-
-  void SetSubView(ViewInfo view_info) const;
-  void ModifyCurrentView(ViewInfo view_info) const;
-  std::shared_ptr<View> CreateView(ViewInfo view_info) const;
-  XLATensorPtr CreateViewTensor(ViewInfo view_info) const;
 
   XLATensorPtr CopyTensorToDevice(const torch::lazy::BackendDevice& device);
 

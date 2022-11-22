@@ -400,11 +400,6 @@ std::string GetLiveTensorsReport(size_t nodes_threshold,
   return ss.str();
 }
 
-std::ptrdiff_t GetTensorViewAliasId(const at::Tensor& tensor) {
-  XLATensorPtr xtensor = bridge::GetXlaTensor(tensor);
-  return xtensor->GetViewAliasId();
-}
-
 std::ptrdiff_t GetTensorId(const at::Tensor& tensor) {
   XLATensorPtr xtensor = bridge::GetXlaTensor(tensor);
   return xtensor->GetUniqueId();
@@ -906,8 +901,6 @@ void InitXlaModuleBindings(py::module m) {
     }
     return result;
   });
-  m.def("_xla_get_tensor_view_alias_id",
-        [](const at::Tensor& tensor) { return GetTensorViewAliasId(tensor); });
   m.def("_xla_get_tensor_id",
         [](const at::Tensor& tensor) { return GetTensorId(tensor); });
   m.def("_xla_get_devices",
