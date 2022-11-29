@@ -116,6 +116,26 @@ class XlaShardingTest(unittest.TestCase):
     xt.add_(1)  # inplace update should preserve the sharding
     self.assertEqual(sharding_spec, torch_xla._XLAC._get_xla_sharding_spec(xt))
 
+  def test_multiple_operations(self):
+    t1 = torch.randn(2, 2) 
+    t2 = torch.randn(2, 2)
+    expected1 = t1 + t2
+    xt1 = t1.to(xm.xla_device())
+    xt2 = t2.to(xm.xla_device())
+    xs.mark_sharding(xt1, self._get_mesh((1, self.n_devices)), (0, 1))
+    xt3 = xt1 + xt2
+    self.assertTrue(torch.allclose(expected1, xt3.cpu()))
+
+    t4 = torch.randn(2, 2).to(xm.xla_device())
+    t5 = torch.randn(2, 2).to(xm.xla_device())
+    expected2 = t4 + t5
+    xt4 = t4.to(xm.xla_device())
+    xt5 = t5.to(xm.xla_device())
+    xs.mark_sharding(xt4, self._get_mesh((1, self.n_devices)), (0, 1))
+    xs.mark_sharding(xt5, self._get_mesh((1, self.n_devices)), (0, 1))
+    xt6 = xt4 + xt5 
+    self.assertTrue(torch.allclose(expected2, xt6.cpu()))
+
 
 class VirtualDeviceTest(XlaShardingTest):
 
