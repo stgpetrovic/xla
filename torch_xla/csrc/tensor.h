@@ -119,7 +119,7 @@ class XLATensor : public c10::intrusive_ptr_target {
       c10::optional<at::ScalarType> logical_element_type_opt) const;
   XLATensorPtr CreateFrom(torch::lazy::Value ir_value,
                           const torch::lazy::BackendDevice& device,
-                          at::ScalarType logical_element_type) const;      
+                          at::ScalarType logical_element_type) const;
 
   // The default ctor previously created a null LazyTensor (one with no 'data'
   // obj). Creating a null XLATensor is no longer possible, since the same can
