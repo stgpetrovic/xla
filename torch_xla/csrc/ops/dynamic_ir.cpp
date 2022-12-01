@@ -60,11 +60,12 @@ XlaOpVector SizeNode::Lower(LoweringContext* loctx) const {
   return ReturnOp(xla::GetDimensionSize(input, this->dim_), loctx);
 }
 
-std::string SizeNode::ToString() const { return "SizeNode"; }
+std::string SizeNode::ToString() const { return "SizeNode for op aten::size"; }
 
 SizeAdd::SizeAdd(torch::lazy::Value a, torch::lazy::Value b)
     : XlaNode(torch::lazy::OpKind{c10::Symbol::fromQualString("aten::add")},
               {a, b}, xla::ShapeUtil::MakeShape(xla::S64, {}), 1) {
+  std::cout << "xw32, file=" << __FILE__ << ", line=" << __LINE__ << "function=" << __FUNCTION__ << ": " << std::endl;
   const torch::lazy::DimensionNode* dim_node_0 = DimCast(operand(0));
   const torch::lazy::DimensionNode* dim_node_1 = DimCast(operand(1));
   // SizeAdd can only be perfomed between two DimensionNode
@@ -83,7 +84,7 @@ int64_t SizeAdd::getDynamicValue() const {
   return dim_node_0->getDynamicValue() + dim_node_1->getDynamicValue();
 }
 
-std::string SizeAdd::ToString() const { return "SizeAdd"; }
+std::string SizeAdd::ToString() const { return "SizeAdd for op aten::add"; }
 
 XlaOpVector SizeAdd::Lower(LoweringContext* loctx) const {
   std::cerr << "xw32, file=" << __FILE__ << ", line=" << __LINE__ << "function=" << __FUNCTION__ << ": " << std::endl;
@@ -111,7 +112,7 @@ int64_t SizeEq::getDynamicValue() const {
 
 std::string SizeEq::ToString() const { return "SizeEq"; }
 
-SizeConstant::SizeConstant(int64_t val) : Scalar(c10::Scalar{val}, xla::S64){};
+SizeConstant::SizeConstant(int64_t val) : Scalar(c10::Scalar{val}, xla::ShapeUtil::MakeShape(GetShapeDimensionType(/*device=*/nullptr), {})){};
 
 SizeMul::SizeMul(torch::lazy::Value a, torch::lazy::Value b)
     : XlaNode(torch::lazy::OpKind{c10::Symbol::fromQualString("aten::mul")},
@@ -174,5 +175,9 @@ XlaOpVector SizeDiv::Lower(LoweringContext* loctx) const {
   auto input2 = loctx->GetOutputOp(operand(1));
   return ReturnOp(xla::Div(input1, input2), loctx);
 }
+
+// XlaOpVector SizeConstant::Lower(LoweringContext* loctx) const {
+//   return torch_xla::Scalar::Lower(loctx);
+// }
 
 }  // namespace torch_xla
